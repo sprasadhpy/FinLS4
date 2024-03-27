@@ -1,25 +1,31 @@
 import os
 
 class Config:
-    def __init__(self):
+    def __init__(self, model='ForGAN LSTM', tickers=[]):
+
+        self.model = model
+        # Tickers to train on
+        self.tickers = tickers
+
         # General configuration
         self.h = 1
         self.l = 20  # Condition length
         self.pred = 1
 
-        # Tickers to train on
-        self.tickers = ['AMZN']
+
 
         # Define the data start and end dates
         self.start_date = "01-01-2000"
+        self.test_start_date = "2022-01-01"
 
         # Get the directory where the Configuration.py file exists
         current_directory = os.path.dirname(os.path.realpath(__file__))
-        print(current_directory)
 
         # Dataset and ETFs-Stocks list locations
-        self.dataloc = os.path.join(current_directory, "RawData/data_2_final.csv")
-        print(self.dataloc)
+        self.rawstocksloc = os.path.join(current_directory, "RawData/data_2_final.csv")
+        self.rawetfsloc = os.path.join(current_directory, "RawData/ETFs-data.csv")
+
+        self.dataloc = os.path.join(current_directory, "Data")
 
         self.etflistloc = os.path.join(current_directory, "RawData/stocks-etfs-list.csv")
 
@@ -70,6 +76,9 @@ class Config:
 
         # Matplotlib figure size setting
         self.figure_size = [15.75, 9.385]
+
+        # Data Loader parameters
+        self.num_workers = 4
 
 
 config = Config()

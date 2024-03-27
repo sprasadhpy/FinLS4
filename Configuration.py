@@ -1,4 +1,4 @@
-# my_config.py
+import os
 
 class Config:
     def __init__(self):
@@ -7,19 +7,24 @@ class Config:
         self.l = 20  # Condition length
         self.pred = 1
 
+        # Define the data start and end dates
+        self.start_date = "01-01-2000"
+
+        # Get the current directory
+        current_directory = os.getcwd()
 
         # Dataset and ETFs-Stocks list locations
-        self.dataloc = "./Data/"
-        self.etflistloc = "./Data/stocks-etfs-list.csv"
+        self.dataloc = os.path.join(current_directory, "Data")
+        self.etflistloc = os.path.join(self.dataloc, "stocks-etfs-list.csv")
 
         # Number of available GPUs
         self.ngpu = 1
 
         # Locations for saving results
-        self.loc = "./Results"
-        self.modelsloc = "./TrainedModels/"
-        self.plotsloc = "./Plots/"
-        self.resultsloc = "./Results/"
+        self.loc = os.path.join(current_directory, "Results")
+        self.modelsloc = os.path.join(current_directory, "TrainedModels")
+        self.plotsloc = os.path.join(current_directory, "Plots")
+        self.resultsloc = os.path.join(current_directory, "Results")
 
         # Model parameters
         self.tanh_coeff = 100
@@ -60,5 +65,4 @@ class Config:
         # Matplotlib figure size setting
         self.figure_size = [15.75, 9.385]
 
-# Instantiate the configuration object
-config = Config()
+

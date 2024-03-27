@@ -7,15 +7,21 @@ class Config:
         self.l = 20  # Condition length
         self.pred = 1
 
+        # Tickers to train on
+        self.tickers = ['AMZN']
+
         # Define the data start and end dates
         self.start_date = "01-01-2000"
 
-        # Get the current directory
-        current_directory = os.getcwd()
+        # Get the directory where the Configuration.py file exists
+        current_directory = os.path.dirname(os.path.realpath(__file__))
+        print(current_directory)
 
         # Dataset and ETFs-Stocks list locations
-        self.dataloc = os.path.join(current_directory, "Data")
-        self.etflistloc = os.path.join(self.dataloc, "stocks-etfs-list.csv")
+        self.dataloc = os.path.join(current_directory, "RawData/data_2_final.csv")
+        print(self.dataloc)
+
+        self.etflistloc = os.path.join(current_directory, "RawData/stocks-etfs-list.csv")
 
         # Number of available GPUs
         self.ngpu = 1
@@ -66,3 +72,4 @@ class Config:
         self.figure_size = [15.75, 9.385]
 
 
+config = Config()

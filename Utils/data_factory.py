@@ -11,14 +11,6 @@ data_dict = {
 def data_provider(cfg, flag):
     Data = data_dict[cfg.data]
 
-    if flag == 'test':
-        shuffle_flag = False
-        drop_last = True
-        batch_size = cfg.batch_size
-    else:
-        shuffle_flag = True
-        drop_last = True
-        batch_size = cfg.batch_size
 
 
     data_set = Data(
@@ -29,6 +21,17 @@ def data_provider(cfg, flag):
         size=[cfg.l, cfg.h, cfg.pred],
         cfg=cfg
     )
+
+    if flag == 'test' or flag == 'val':
+        shuffle_flag = False
+        drop_last = False
+        batch_size = len(data_set)  # Set batch size to the entire data
+    else:
+        shuffle_flag = True
+        drop_last = True
+        batch_size = cfg.batch_size
+
+
     print(flag, len(data_set))
     data_loader = DataLoader(
         data_set,

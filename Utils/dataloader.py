@@ -104,7 +104,7 @@ class Dataset_Custom(Dataset):
         return seq_x#, seq_dates
 
     def __len__(self):
-        return len(self.data_x) - self.seq_len - self.pred_len + 1
+        return len(self.data_x)
 
     def inverse_transform(self, data):
         return self.scaler.inverse_transform(data)

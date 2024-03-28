@@ -51,7 +51,7 @@ class Config:
         self.batch_size = 512
         self.diter = 1
 
-        self.n_epochs = 10
+        self.n_epochs = 100
         self.n_grad = 25
         self.vl_later = False
 
@@ -75,6 +75,8 @@ class Config:
         # Results processing
         # self.nres = len(self.lrg_s)
         self.resultsname = "./Results/results.csv"
+        self.trained_model_loc = "./TrainedModels/"
+        self.results_loc = "./Results/"
 
         # Matplotlib figure size setting
         self.figure_size = [15.75, 9.385]

@@ -6,7 +6,7 @@ from ExecuteModels.execute_for_gan_lstm import execute_for_gan_lstm
 
 def main():
 
-    model = 'ForGAN LSTM'
+    model = 'ForGAN-LSTM'
     # tickers = ['AMZN','AZO','GS','EL']
     tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
@@ -28,7 +28,7 @@ def main():
         cfg.current_ticker = ticker
         cfg.current_etf = findETF(pd.read_csv(cfg.etflistloc), cfg.current_ticker)
 
-        if cfg.model == 'ForGAN LSTM':
+        if cfg.model == 'ForGAN-LSTM':
 
             execute_for_gan_lstm(cfg)
 

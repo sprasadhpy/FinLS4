@@ -8,7 +8,7 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
     """
 
     batch_size = cfg.batch_size
-    n_epochs = cfg.n_epochs
+    n_epochs = cfg.n_grad
     hid_d = cfg.hid_d
     hid_g = cfg.hid_g
     z_dim = cfg.z_dim
@@ -164,5 +164,12 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
     print(r"$\gamma$:", gamma)
     print(r"$\delta$:", delta)
 
+    gradients = {"PnL_norm": PnL_norm.cpu(),
+                 "MSE_norm": MSE_norm.cpu(),
+                 "SR_norm": SR_norm.cpu(),
+                 "STD_norm": STD_norm.cpu(),
+                 "BCE_norm": BCE_norm.cpu()}
 
-    return gen, disc, gen_opt, disc_opt, alpha, beta, gamma, delta
+
+
+    return gen, disc, gen_opt, disc_opt, alpha, beta, gamma, delta, gradients

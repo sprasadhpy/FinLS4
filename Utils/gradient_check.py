@@ -2,11 +2,22 @@ import torch
 from tqdm import tqdm
 from Utils.combine_vectors import combine_vectors
 
-def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_loader, batch_size, hid_d, hid_g,
-                   z_dim, l=10, pred=1, diter=1, tanh_coeff=100, device='cpu', cfg=None):
+def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=None):
     """
     Gradient norm check
     """
+
+    batch_size = cfg.batch_size
+    n_epochs = cfg.n_epochs
+    hid_d = cfg.hid_d
+    hid_g = cfg.hid_g
+    z_dim = cfg.z_dim
+    l = cfg.l
+    pred = cfg.pred
+    diter = cfg.diter
+    tanh_coeff = cfg.tanh_coeff
+    device = cfg.device
+
     ntrain = len(train_loader.dataset)
     nbatches = ntrain // batch_size + 1
     BCE_norm = torch.empty(nbatches * n_epochs -1, device=device)

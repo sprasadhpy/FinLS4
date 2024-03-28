@@ -27,8 +27,8 @@ def execute_for_gan_lstm(cfg):
 
 
 
-    gen = Generator(cfg.z_dim, cfg.l, cfg.hid_g, cfg.pred, ref_mean, ref_std).to(device)
-    disc = Discriminator(cfg.l+cfg.pred, cfg.hid_d, ref_mean, ref_std).to(device)
+    gen = Generator(cfg,ref_mean, ref_std).to(device)
+    disc = Discriminator(cfg, ref_mean, ref_std).to(device)
 
     print("\nGenerator and Discriminator Initialized...\n")
 
@@ -36,8 +36,7 @@ def execute_for_gan_lstm(cfg):
     disc_opt = torch.optim.RMSprop(disc.parameters(), lr=cfg.lrd_s)
     criterion = torch.nn.BCELoss()
 
-    gen, disc, gen_opt, disc_opt,alpha, beta, gamma, delta = gradient_check(gen, disc, gen_opt, disc_opt, criterion, cfg.n_grad, train_loader, cfg.batch_size, cfg.hid_d, cfg.hid_g,
-                   cfg.z_dim, l=cfg.l, pred=1, diter=1, tanh_coeff=100, device=device, cfg=None)
+    gen, disc, gen_opt, disc_opt,alpha, beta, gamma, delta = gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=cfg)
 
 
 

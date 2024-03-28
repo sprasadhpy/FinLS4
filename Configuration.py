@@ -42,12 +42,13 @@ class Config:
         # Model parameters
         self.tanh_coeff = 100
         self.z_dim = 20  # Noise dimension
-        self.hid_g = 8
-        self.hid_d = 8
+        self.hid_g = int(8)
+        self.hid_d = int(8)
+
 
         # Training parameters
         self.checkpoint_epoch = 20
-        self.batch_size = 1024
+        self.batch_size = 512
         self.diter = 1
 
         self.n_epochs = 10
@@ -63,8 +64,8 @@ class Config:
 
         # Adjusted model parameters
         self.z_dim_adjusted = 8
-        self.hid_d_s = [8]
-        self.hid_g_s = []
+        self.hid_d_s = 8
+        self.hid_g_s = 8
 
         # Optional exploration of different learning rates
         self.lrg_s = 0.00001

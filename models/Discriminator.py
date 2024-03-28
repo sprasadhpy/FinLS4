@@ -9,12 +9,12 @@ class Discriminator(nn.Module):
       hidden_dim: the inner dimension, a scalar
     '''
 
-    def __init__(self, in_dim, hidden_dim, mean, std):
+    def __init__(self, cfg, mean, std):
         super(Discriminator, self).__init__()
-        self.hidden_dim = hidden_dim
+        self.hidden_dim = cfg.hid_d
         self.mean = mean
         self.std = std
-        self.lstm = nn.LSTM(input_size=in_dim, hidden_size=self.hidden_dim, num_layers=1, dropout=0)
+        self.lstm = nn.LSTM(input_size=cfg.l+cfg.pred, hidden_size=self.hidden_dim, num_layers=1, dropout=0)
         nn.init.xavier_normal_(self.lstm.weight_ih_l0)
         nn.init.xavier_normal_(self.lstm.weight_hh_l0)
         self.linear = nn.Linear(in_features=self.hidden_dim, out_features=1)

@@ -47,11 +47,11 @@ class Config:
 
         # Training parameters
         self.checkpoint_epoch = 20
-        self.batch_size = 64
+        self.batch_size = 1024
         self.diter = 1
 
         self.n_epochs = 10
-        self.ngrad = 5
+        self.n_grad = 25
         self.vl_later = False
 
         # Data split ratios

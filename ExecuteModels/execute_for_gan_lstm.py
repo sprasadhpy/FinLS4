@@ -36,7 +36,7 @@ def execute_for_gan_lstm(cfg):
     disc_opt = torch.optim.RMSprop(disc.parameters(), lr=cfg.lrd_s)
     criterion = torch.nn.BCELoss()
 
-    gen, disc, gen_opt, disc_opt = gradient_check(gen, disc, gen_opt, disc_opt, criterion, cfg.n_epochs, train_loader, cfg.batch_size, cfg.hid_d, cfg.hid_g,
+    gen, disc, gen_opt, disc_opt,alpha, beta, gamma, delta = gradient_check(gen, disc, gen_opt, disc_opt, criterion, cfg.n_grad, train_loader, cfg.batch_size, cfg.hid_d, cfg.hid_g,
                    cfg.z_dim, l=cfg.l, pred=1, diter=1, tanh_coeff=100, device=device, cfg=None)
 
 

@@ -7,8 +7,8 @@ from ExecuteModels.execute_for_gan_lstm import execute_for_gan_lstm
 def main():
 
     model = 'ForGAN LSTM'
-    tickers = ['AMZN','AZO','GS','EL']
-    # tickers = ['AMZN']
+    # tickers = ['AMZN','AZO','GS','EL']
+    tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
     # Set the device and print the details of the device

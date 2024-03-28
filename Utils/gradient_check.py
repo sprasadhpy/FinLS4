@@ -9,11 +9,11 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
     """
     ntrain = len(train_loader.dataset)
     nbatches = ntrain // batch_size + 1
-    BCE_norm = torch.empty(nbatches * n_epochs, device=device)
-    PnL_norm = torch.empty(nbatches * n_epochs, device=device)
-    MSE_norm = torch.empty(nbatches * n_epochs, device=device)
-    SR_norm = torch.empty(nbatches * n_epochs, device=device)
-    STD_norm = torch.empty(nbatches * n_epochs, device=device)
+    BCE_norm = torch.empty(nbatches * n_epochs -1, device=device)
+    PnL_norm = torch.empty(nbatches * n_epochs -1, device=device)
+    MSE_norm = torch.empty(nbatches * n_epochs -1, device=device)
+    SR_norm = torch.empty(nbatches * n_epochs -1, device=device)
+    STD_norm = torch.empty(nbatches * n_epochs -1, device=device)
 
     fake_and_condition = False
     real_and_condition = False
@@ -33,14 +33,8 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
         # shuffle the dataset for the optimisation to work
         for i, train_data in enumerate(train_loader):
             train_data = train_data.to(device)
-            # print(f"train_data shape before slicing: {train_data.shape}")
-            # condition = train_data[:, 0:l]
-            # print(f"condition shape after slicing: {condition.shape}")
-            # condition = condition.unsqueeze(0)
-            # print(f"condition shape after unsqueeze: {condition.shape}")
             curr_batch_size = train_data.size(0)
-            if i == (nbatches - 1):
-                curr_batch_size = totlen - i * batch_size
+            # print(f"curr_batch_size: {curr_batch_size}")
             h_0d = torch.zeros((1, curr_batch_size, hid_d), device=device, dtype=torch.float)
             c_0d = torch.zeros((1, curr_batch_size, hid_d), device=device, dtype=torch.float)
             h_0g = torch.zeros((1, curr_batch_size, hid_g), device=device, dtype=torch.float)
@@ -149,10 +143,10 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
             BCE_norm[epoch * nbatches + i] = total_norm
             gen_opt.step()
 
-    alpha = torch.mean(BCE_norm / PnL_norm)
-    beta = torch.mean(BCE_norm / MSE_norm)
-    gamma = torch.mean(BCE_norm / SR_norm)
-    delta = torch.mean(BCE_norm / STD_norm)
+    alpha = torch.mean(torch.where(PnL_norm != 0, BCE_norm / PnL_norm, torch.tensor(0.0)))
+    beta = torch.mean(torch.where(MSE_norm != 0, BCE_norm / MSE_norm, torch.tensor(0.0)))
+    gamma = torch.mean(torch.where(SR_norm != 0, BCE_norm / SR_norm, torch.tensor(0.0)))
+    delta = torch.mean(torch.where(STD_norm != 0, BCE_norm / STD_norm, torch.tensor(0.0)))
     print("Completed. ")
     print(r"$\alpha$:", alpha)
     print(r"$\beta$:", beta)

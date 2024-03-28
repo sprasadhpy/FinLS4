@@ -44,11 +44,8 @@ class Generator(nn.Module):
         '''
         # x = combine_vectors(noise.to(torch.float),condition.to(torch.float),2)
         condition = (condition - self.mean) / self.std
-        # print('condition shape: ', condition.shape)
         out, (h_n, c_n) = self.lstm(condition, (h_0, c_0))
-        # print('out shape: ', out.shape, 'h_n shape: ', h_n.shape, 'c_n shape: ', c_n.shape)
         out = combine_vectors(noise.to(torch.float), h_n.to(torch.float), dim=-1)
-        # print('out shape: ', out.shape)
         out = self.linear1(out)
         out = self.activation(out)
         out = self.linear2(out)

@@ -1,4 +1,5 @@
-def combine_vectors(self, x, y, dim=-1):
+import torch
+def combine_vectors(x, y, dim=-1):
     '''
     Function for combining two tensors
     '''

@@ -8,9 +8,9 @@ class Config:
         self.tickers = tickers
 
         # General configuration
-        self.h = 1
+        self.h = 1 # Horizon
         self.l = 20  # Condition length
-        self.pred = 1
+        self.pred = 1 # Prediction length
 
 
 
@@ -47,7 +47,7 @@ class Config:
 
         # Training parameters
         self.checkpoint_epoch = 20
-        self.batch_size = 4096
+        self.batch_size = 64
         self.diter = 1
 
         self.n_epochs = 10

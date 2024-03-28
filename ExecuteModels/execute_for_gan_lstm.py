@@ -21,6 +21,7 @@ def execute_for_gan_lstm(cfg):
     print("\nData Splitting Completed...\n")
 
     first_batch_inputs = next(iter(train_loader))
+    print(f"first_batch_inputs shape: {first_batch_inputs.shape}")
     ref_mean = torch.mean(first_batch_inputs)
     ref_std = torch.std(first_batch_inputs)
 

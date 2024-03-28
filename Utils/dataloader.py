@@ -55,39 +55,39 @@ class Dataset_Custom(Dataset):
         N_tr = int(self.cfg.tr * N)
         N_vl = int(self.cfg.vl * N)
         N_tst = N - N_tr - N_vl
-
         train_sr = excess_returns[0:N_tr]
         val_sr = excess_returns[N_tr:N_tr + N_vl]
         train_sr = excess_returns[0:N_tr]
         val_sr = excess_returns[N_tr:N_tr + N_vl]
         test_sr = excess_returns[N_tr + N_vl:]
-        n = int((N_tr - self.seq_len - self.pred_len) / self.label_len) + 1
-        train_data = np.zeros(shape=(n, self.seq_len + self.pred_len))
+        n = int((N_tr - self.cfg.l - self.cfg.pred) / self.cfg.h) + 1
+        train_data = np.zeros(shape=(n, self.cfg.l + self.cfg.pred))
         l_tot = 0
         for i in range(n):
-            train_data[i, :] = train_sr[l_tot:l_tot + self.seq_len + self.pred_len]
-            l_tot = l_tot + self.label_len
-        n = int((N_vl - self.seq_len - self.pred_len) / self.label_len) + 1
-        val_data = np.zeros(shape=(n, self.seq_len + self.pred_len))
+            train_data[i, :] = train_sr[l_tot:l_tot + self.cfg.l + self.cfg.pred]
+            l_tot = l_tot + self.cfg.h
+        n = int((N_vl - self.cfg.l - self.cfg.pred) / self.cfg.h) + 1
+        val_data = np.zeros(shape=(n, self.cfg.l + self.cfg.pred))
         l_tot = 0
         for i in range(n):
-            val_data[i, :] = val_sr[l_tot:l_tot + self.seq_len + self.pred_len]
-            l_tot = l_tot + self.label_len
-        n = int((N_tst - self.seq_len - self.pred_len) / self.label_len) + 1
-        test_data = np.zeros(shape=(n, self.seq_len + self.pred_len))
+            val_data[i, :] = val_sr[l_tot:l_tot + self.cfg.l + self.cfg.pred]
+            l_tot = l_tot + self.cfg.h
+        n = int((N_tst - self.cfg.l - self.cfg.pred) / self.cfg.h) + 1
+        test_data = np.zeros(shape=(n, self.cfg.l + self.cfg.pred))
         l_tot = 0
         for i in range(n):
-            test_data[i, :] = test_sr[l_tot:l_tot + self.seq_len + self.pred_len]
-            l_tot = l_tot + self.label_len
+            test_data[i, :] = test_sr[l_tot:l_tot + self.cfg.l + self.cfg.pred]
+            l_tot = l_tot + self.cfg.h
 
         if self.flag == 'train':
-            self.data_x = torch.tensor(train_data, dtype=torch.float32).squeeze(0)
+            self.data_x = torch.tensor(train_data, dtype=torch.float32)
             self.dates = torch.tensor(dates_dt[0:N_tr].astype(int) // 10 ** 9, dtype=torch.float32)
+            print(f"train data shape: {self.data_x.shape}")
         elif self.flag == 'val':
-            self.data_x = torch.tensor(val_data, dtype=torch.float32).squeeze(0)
+            self.data_x = torch.tensor(val_data, dtype=torch.float32)
             self.dates = torch.tensor(dates_dt[N_tr:N_tr + N_vl].astype(int) // 10 ** 9, dtype=torch.float32)
         else:
-            self.data_x = torch.tensor(test_data, dtype=torch.float32).squeeze(0)
+            self.data_x = torch.tensor(test_data, dtype=torch.float32)
             self.dates = torch.tensor(dates_dt[N_tr + N_vl:].astype(int) // 10 ** 9, dtype=torch.float32)
 
 
@@ -95,8 +95,8 @@ class Dataset_Custom(Dataset):
         s_begin = index
         s_end = s_begin + self.seq_len
 
-        seq_x = self.data_x[s_begin:s_end]
-        seq_dates = self.dates[s_begin:s_end]
+        seq_x = self.data_x[s_begin,:]
+        # seq_dates = self.dates[s_begin:s_end,:]
 
         # print(f"seq_x shape: {seq_x.shape}, seq_dates shape: {seq_dates.shape}")
 

@@ -32,6 +32,12 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
         # train_data = train_data[perm, :]
         # shuffle the dataset for the optimisation to work
         for i, train_data in enumerate(train_loader):
+            train_data = train_data.to(device)
+            # print(f"train_data shape before slicing: {train_data.shape}")
+            # condition = train_data[:, 0:l]
+            # print(f"condition shape after slicing: {condition.shape}")
+            # condition = condition.unsqueeze(0)
+            # print(f"condition shape after unsqueeze: {condition.shape}")
             curr_batch_size = train_data.size(0)
             if i == (nbatches - 1):
                 curr_batch_size = totlen - i * batch_size
@@ -40,9 +46,9 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
             h_0g = torch.zeros((1, curr_batch_size, hid_g), device=device, dtype=torch.float)
             c_0g = torch.zeros((1, curr_batch_size, hid_g), device=device, dtype=torch.float)
             condition = train_data[:, 0:l]
-            # condition = condition.unsqueeze(0)
+            condition = condition.unsqueeze(0)
             real = train_data[:, l:(l + pred)]
-            # real = real.unsqueeze(0)
+            real = real.unsqueeze(0)
 
             ### Update discriminator ###
             # Zero out the discriminator gradients
@@ -51,7 +57,7 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_load
                 # Get noise corresponding to the current batch_size
                 noise = torch.randn(1, curr_batch_size, z_dim, device=device, dtype=torch.float)
                 # Get outputs from the generator
-                print('condition shape:', condition.shape)
+                # print('condition shape:', condition.shape)
                 fake = gen(noise, condition, h_0g, c_0g)
                 # fake = fake.unsqueeze(0)
                 fake_and_condition = combine_vectors(condition, fake, dim=-1)

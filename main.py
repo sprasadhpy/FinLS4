@@ -11,6 +11,13 @@ def main():
     # tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
+    # Set the device and print the details of the device
+    device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
+
+    cfg.device = device
+
+    print("Device: ", device)
+
 
     # Run data preprocessing
     data_preprocessing(cfg)

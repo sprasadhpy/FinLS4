@@ -30,6 +30,7 @@ class Config:
         self.etflistloc = os.path.join(current_directory, "RawData/stocks-etfs-list.csv")
 
         # Number of available GPUs
+        self.device = 'cpu'
         self.ngpu = 1
 
         # Locations for saving results
@@ -41,8 +42,8 @@ class Config:
         # Model parameters
         self.tanh_coeff = 100
         self.z_dim = 20  # Noise dimension
-        self.hid_d = 8
         self.hid_g = 8
+        self.hid_d = 8
 
         # Training parameters
         self.checkpoint_epoch = 20
@@ -66,12 +67,12 @@ class Config:
         self.hid_g_s = []
 
         # Optional exploration of different learning rates
-        self.lrg_s = [0.00001]
-        self.lrd_s = [0.00001]
+        self.lrg_s = 0.00001
+        self.lrd_s = 0.00001
         self.vl_later_adjusted = True
 
         # Results processing
-        self.nres = len(self.lrg_s)
+        # self.nres = len(self.lrg_s)
         self.resultsname = "./Results/results.csv"
 
         # Matplotlib figure size setting

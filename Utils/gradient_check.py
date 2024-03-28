@@ -1,0 +1,157 @@
+import torch
+from tqdm import tqdm
+from Utils.combine_vectors import combine_vectors
+
+def gradient_check(gen, disc, gen_opt, disc_opt, criterion, n_epochs, train_loader, batch_size, hid_d, hid_g,
+                   z_dim, l=10, pred=1, diter=1, tanh_coeff=100, device='cpu', cfg=None):
+    """
+    Gradient norm check
+    """
+    ntrain = len(train_loader.dataset)
+    nbatches = ntrain // batch_size + 1
+    BCE_norm = torch.empty(nbatches * n_epochs, device=device)
+    PnL_norm = torch.empty(nbatches * n_epochs, device=device)
+    MSE_norm = torch.empty(nbatches * n_epochs, device=device)
+    SR_norm = torch.empty(nbatches * n_epochs, device=device)
+    STD_norm = torch.empty(nbatches * n_epochs, device=device)
+
+    fake_and_condition = False
+    real_and_condition = False
+
+    disc_fake_pred = False
+    disc_real_pred = False
+    # totlen = train_data.shape[0]
+
+    # currstep = 0
+    # train the discriminator more
+
+    gen.train()
+
+    for epoch in tqdm(range(n_epochs)):
+        # perm = torch.randperm(ntrain)
+        # train_data = train_data[perm, :]
+        # shuffle the dataset for the optimisation to work
+        for i, train_data in enumerate(train_loader):
+            curr_batch_size = train_data.size(0)
+            if i == (nbatches - 1):
+                curr_batch_size = totlen - i * batch_size
+            h_0d = torch.zeros((1, curr_batch_size, hid_d), device=device, dtype=torch.float)
+            c_0d = torch.zeros((1, curr_batch_size, hid_d), device=device, dtype=torch.float)
+            h_0g = torch.zeros((1, curr_batch_size, hid_g), device=device, dtype=torch.float)
+            c_0g = torch.zeros((1, curr_batch_size, hid_g), device=device, dtype=torch.float)
+            condition = train_data[:, 0:l]
+            # condition = condition.unsqueeze(0)
+            real = train_data[:, l:(l + pred)]
+            # real = real.unsqueeze(0)
+
+            ### Update discriminator ###
+            # Zero out the discriminator gradients
+            for j in range(diter):
+                disc_opt.zero_grad()
+                # Get noise corresponding to the current batch_size
+                noise = torch.randn(1, curr_batch_size, z_dim, device=device, dtype=torch.float)
+                # Get outputs from the generator
+                print('condition shape:', condition.shape)
+                fake = gen(noise, condition, h_0g, c_0g)
+                # fake = fake.unsqueeze(0)
+                fake_and_condition = combine_vectors(condition, fake, dim=-1)
+                fake_and_condition.to(torch.float)
+                real_and_condition = combine_vectors(condition, real, dim=-1)
+                disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
+                disc_real_pred = disc(real_and_condition, h_0d, c_0d)
+
+                # Updating the discriminator
+
+                disc_fake_loss = criterion(disc_fake_pred, torch.zeros_like(disc_fake_pred))
+                disc_real_loss = criterion(disc_real_pred, torch.ones_like(disc_real_pred))
+                disc_loss = (disc_fake_loss + disc_real_loss) / 2
+                # disc_loss.backward(retain_graph=True)
+                disc_loss.backward()
+                disc_opt.step()
+
+            # Update generator
+            # Zero out the generator gradients
+
+            noise = torch.randn(1, curr_batch_size, z_dim, device=device, dtype=torch.float)
+            fake = gen(noise, condition, h_0g, c_0g)
+
+            # fake1 = fake1.unsqueeze(0).unsqueeze(2)
+            fake_and_condition = combine_vectors(condition, fake, dim=-1)
+
+            disc_fake_pred = disc(fake_and_condition, h_0d, c_0d)
+
+            ft = fake.squeeze(0).squeeze(1)
+            rl = real.squeeze(0).squeeze(1)
+
+            # print('ft',ft)
+
+            sign_approx = torch.tanh(tanh_coeff * ft)
+            # print('sign_approx',sign_approx)
+
+            PnL_s = sign_approx * rl
+            PnL = torch.mean(PnL_s)
+            MSE = (torch.norm(ft - rl) ** 2) / curr_batch_size
+            SR = (torch.mean(PnL_s)) / (torch.std(PnL_s))
+            STD = torch.std(PnL_s)
+            gen_opt.zero_grad()
+            # print('sr before',SR)
+            SR.backward(retain_graph=True)
+            # print('sr after',SR)
+            total_norm = 0
+            for p in gen.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+            total_norm = total_norm ** (1. / 2)
+            # list of gradient norms
+            SR_norm[epoch * nbatches + i] = total_norm
+
+            gen_opt.zero_grad()
+            PnL.backward(retain_graph=True)
+            total_norm = 0
+            for p in gen.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+                total_norm = total_norm ** 0.5
+            PnL_norm[epoch * nbatches + i] = total_norm
+
+            gen_opt.zero_grad()
+            MSE.backward(retain_graph=True)
+            total_norm = 0
+            for p in gen.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+                total_norm = total_norm ** 0.5
+            MSE_norm[epoch * nbatches + i] = total_norm
+
+            gen_opt.zero_grad()
+            STD.backward(retain_graph=True)
+            total_norm = 0
+            for p in gen.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+                total_norm = total_norm ** 0.5
+            STD_norm[epoch * nbatches + i] = total_norm
+
+            gen_opt.zero_grad()
+            gen_loss = criterion(disc_fake_pred, torch.ones_like(disc_fake_pred))
+            gen_loss.backward()
+            total_norm = 0
+            for p in gen.parameters():
+                param_norm = p.grad.detach().data.norm(2)
+                total_norm += param_norm.item() ** 2
+                total_norm = total_norm ** 0.5
+            BCE_norm[epoch * nbatches + i] = total_norm
+            gen_opt.step()
+
+    alpha = torch.mean(BCE_norm / PnL_norm)
+    beta = torch.mean(BCE_norm / MSE_norm)
+    gamma = torch.mean(BCE_norm / SR_norm)
+    delta = torch.mean(BCE_norm / STD_norm)
+    print("Completed. ")
+    print(r"$\alpha$:", alpha)
+    print(r"$\beta$:", beta)
+    print(r"$\gamma$:", gamma)
+    print(r"$\delta$:", delta)
+
+
+    return gen, disc, gen_opt, disc_opt, alpha, beta, gamma, delta

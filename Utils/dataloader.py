@@ -81,14 +81,14 @@ class Dataset_Custom(Dataset):
             l_tot = l_tot + self.label_len
 
         if self.flag == 'train':
-            self.data_x = train_data
-            self.dates = dates_dt[0:N_tr]
+            self.data_x = torch.tensor(train_data, dtype=torch.float32).squeeze(0)
+            self.dates = torch.tensor(dates_dt[0:N_tr].astype(int) // 10 ** 9, dtype=torch.float32)
         elif self.flag == 'val':
-            self.data_x = val_data
-            self.dates = dates_dt[N_tr:N_tr + N_vl]
+            self.data_x = torch.tensor(val_data, dtype=torch.float32).squeeze(0)
+            self.dates = torch.tensor(dates_dt[N_tr:N_tr + N_vl].astype(int) // 10 ** 9, dtype=torch.float32)
         else:
-            self.data_x = test_data
-            self.dates = dates_dt[N_tr + N_vl:]
+            self.data_x = torch.tensor(test_data, dtype=torch.float32).squeeze(0)
+            self.dates = torch.tensor(dates_dt[N_tr + N_vl:].astype(int) // 10 ** 9, dtype=torch.float32)
 
 
     def __getitem__(self, index):
@@ -98,7 +98,9 @@ class Dataset_Custom(Dataset):
         seq_x = self.data_x[s_begin:s_end]
         seq_dates = self.dates[s_begin:s_end]
 
-        return seq_x, seq_dates
+        # print(f"seq_x shape: {seq_x.shape}, seq_dates shape: {seq_dates.shape}")
+
+        return seq_x#, seq_dates
 
     def __len__(self):
         return len(self.data_x) - self.seq_len - self.pred_len + 1

@@ -48,7 +48,7 @@ class Config:
 
         # Training parameters
         self.checkpoint_epoch = 20
-        self.batch_size = 512
+        self.batch_size = 2048
         self.diter = 1
 
         self.n_epochs = 500

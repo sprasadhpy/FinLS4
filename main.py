@@ -10,11 +10,11 @@ def main():
 
     models= ['ForGAN-LSTM', 'ForGAN-SegRNN', 'ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD']
     # model = 'ForGAN-LSTM'
-    model = 'ForGAN-SegRNN'
-    model = models[2]
+    # model = 'ForGAN-SegRNN'
+    model = models[0]
 
-    # tickers = ['AMZN','AZO','GS','EL']
-    tickers = ['AMZN']
+    tickers = ['AMZN','AZO','GS','EL']
+    # tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
     # Set the device and print the details of the device
@@ -30,6 +30,8 @@ def main():
 
     for ticker in tickers:
         print('\n' + '-'*50 + ticker + '-'*50 + '\n')
+
+        print("Model: ", cfg.model)
         print("Processing data for ", ticker)
         # Read the data
 

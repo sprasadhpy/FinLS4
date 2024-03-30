@@ -86,7 +86,7 @@ class Dataset_Custom(Dataset):
 
         if self.flag == 'train':
             self.data_x = torch.tensor(train_data, dtype=torch.float32)
-            print(f"train data shape: {self.data_x.shape}")
+            # print(f"train data shape: {self.data_x.shape}")
         elif self.flag == 'val':
             self.data_x = torch.tensor(val_data, dtype=torch.float32)
         else:

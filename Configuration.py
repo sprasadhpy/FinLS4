@@ -51,7 +51,7 @@ class Config:
         self.batch_size = 512
         self.diter = 1
 
-        self.n_epochs = 100
+        self.n_epochs = 500
         self.n_grad = 25
         self.vl_later = False
 
@@ -83,6 +83,8 @@ class Config:
 
         # Data Loader parameters
         self.num_workers = 4
+
+        self.seg_len = 4 # Segment length for SegRNN
 
 
 config = Config()

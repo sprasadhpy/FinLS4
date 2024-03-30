@@ -65,11 +65,19 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
                 # print('condition shape:', condition.shape)
                 fake = gen(noise, condition, h_0g, c_0g)
                 # fake = fake.unsqueeze(0)
-                fake_and_condition = combine_vectors(condition, fake, dim=-1)
-                fake_and_condition.to(torch.float)
-                real_and_condition = combine_vectors(condition, real, dim=-1)
-                disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
-                disc_real_pred = disc(real_and_condition, h_0d, c_0d)
+
+                if cfg.model == "ForGAN-LSTM":
+                    fake_and_condition = combine_vectors(condition, fake, dim=-1)
+                    fake_and_condition.to(torch.float)
+                    real_and_condition = combine_vectors(condition, real, dim=-1)
+                    disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
+                    disc_real_pred = disc(real_and_condition, h_0d, c_0d)
+                elif cfg.model == "ForGAN-SegRNN":
+                    fake_and_condition = combine_vectors(condition[:, :, 1:], fake, dim=-1)
+                    fake_and_condition.to(torch.float)
+                    real_and_condition = combine_vectors(condition[:, :, 1:], real, dim=-1)
+                    disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
+                    disc_real_pred = disc(real_and_condition, h_0d, c_0d)
 
                 # Updating the discriminator
 
@@ -87,7 +95,11 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
             fake = gen(noise, condition, h_0g, c_0g)
 
             # fake1 = fake1.unsqueeze(0).unsqueeze(2)
-            fake_and_condition = combine_vectors(condition, fake, dim=-1)
+
+            if cfg.model == "ForGAN-LSTM":
+                fake_and_condition = combine_vectors(condition, fake, dim=-1)
+            elif cfg.model == "ForGAN-SegRNN":
+                fake_and_condition = combine_vectors(condition[:, :, 1:], fake, dim=-1)
 
             disc_fake_pred = disc(fake_and_condition, h_0d, c_0d)
 
@@ -110,8 +122,9 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
             # print('sr after',SR)
             total_norm = 0
             for p in gen.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
+                if p.grad is not None:
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
             total_norm = total_norm ** (1. / 2)
             # list of gradient norms
             SR_norm[epoch * nbatches + i] = total_norm
@@ -120,27 +133,30 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
             PnL.backward(retain_graph=True)
             total_norm = 0
             for p in gen.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
-                total_norm = total_norm ** 0.5
+                if p.grad is not None:
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
+                    total_norm = total_norm ** 0.5
             PnL_norm[epoch * nbatches + i] = total_norm
 
             gen_opt.zero_grad()
             MSE.backward(retain_graph=True)
             total_norm = 0
             for p in gen.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
-                total_norm = total_norm ** 0.5
+                if p.grad is not None:
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
+                    total_norm = total_norm ** 0.5
             MSE_norm[epoch * nbatches + i] = total_norm
 
             gen_opt.zero_grad()
             STD.backward(retain_graph=True)
             total_norm = 0
             for p in gen.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
-                total_norm = total_norm ** 0.5
+                if p.grad is not None:
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
+                    total_norm = total_norm ** 0.5
             STD_norm[epoch * nbatches + i] = total_norm
 
             gen_opt.zero_grad()
@@ -148,9 +164,10 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
             gen_loss.backward()
             total_norm = 0
             for p in gen.parameters():
-                param_norm = p.grad.detach().data.norm(2)
-                total_norm += param_norm.item() ** 2
-                total_norm = total_norm ** 0.5
+                if p.grad is not None:
+                    param_norm = p.grad.detach().data.norm(2)
+                    total_norm += param_norm.item() ** 2
+                    total_norm = total_norm ** 0.5
             BCE_norm[epoch * nbatches + i] = total_norm
             gen_opt.step()
 

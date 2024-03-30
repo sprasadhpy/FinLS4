@@ -1,9 +1,10 @@
-from Utils.dataloader import Dataset_Custom
+from Utils.dataloader import Dataset_Custom, Dataset_Basis
 from torch.utils.data import DataLoader
 import os
 
 data_dict = {
     'custom': Dataset_Custom,
+    'basis': Dataset_Basis,
 }
 
 

@@ -4,14 +4,17 @@ from Configuration import Config
 from Utils.data_preprocessing import data_preprocessing, findETF
 from ExecuteModels.execute_for_gan_lstm import execute_for_gan_lstm
 from ExecuteModels.execute_for_gan_segrnn import execute_for_gan_segrnn
+from ExecuteModels.execute_for_gan_tln import execute_for_gan_tln
 
 def main():
 
+    models= ['ForGAN-LSTM', 'ForGAN-SegRNN', 'ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD']
     # model = 'ForGAN-LSTM'
     model = 'ForGAN-SegRNN'
+    model = models[2]
 
-    tickers = ['AMZN','AZO','GS','EL']
-    # tickers = ['AMZN']
+    # tickers = ['AMZN','AZO','GS','EL']
+    tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
     # Set the device and print the details of the device
@@ -38,12 +41,13 @@ def main():
             cfg.current_etf = ticker
 
         if cfg.model == 'ForGAN-LSTM':
-
             execute_for_gan_lstm(cfg)
 
         elif cfg.model == 'ForGAN-SegRNN':
-
             execute_for_gan_segrnn(cfg)
+
+        elif cfg.model in ['ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD']:
+            execute_for_gan_tln(cfg)
 
 
 if __name__ == "__main__":

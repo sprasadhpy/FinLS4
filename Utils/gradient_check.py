@@ -66,18 +66,20 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
                 fake = gen(noise, condition, h_0g, c_0g)
                 # fake = fake.unsqueeze(0)
 
-                if cfg.model == "ForGAN-LSTM":
-                    fake_and_condition = combine_vectors(condition, fake, dim=-1)
-                    fake_and_condition.to(torch.float)
-                    real_and_condition = combine_vectors(condition, real, dim=-1)
-                    disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
-                    disc_real_pred = disc(real_and_condition, h_0d, c_0d)
-                elif cfg.model == "ForGAN-SegRNN":
+                if cfg.model == "ForGAN-SegRNN":
                     fake_and_condition = combine_vectors(condition[:, :, 1:], fake, dim=-1)
                     fake_and_condition.to(torch.float)
                     real_and_condition = combine_vectors(condition[:, :, 1:], real, dim=-1)
                     disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
                     disc_real_pred = disc(real_and_condition, h_0d, c_0d)
+
+                else:
+                    fake_and_condition = combine_vectors(condition, fake, dim=-1)
+                    fake_and_condition.to(torch.float)
+                    real_and_condition = combine_vectors(condition, real, dim=-1)
+                    disc_fake_pred = disc(fake_and_condition.detach(), h_0d, c_0d)
+                    disc_real_pred = disc(real_and_condition, h_0d, c_0d)
+
 
                 # Updating the discriminator
 
@@ -96,10 +98,11 @@ def gradient_check(gen, disc, gen_opt, disc_opt, criterion, train_loader, cfg=No
 
             # fake1 = fake1.unsqueeze(0).unsqueeze(2)
 
-            if cfg.model == "ForGAN-LSTM":
-                fake_and_condition = combine_vectors(condition, fake, dim=-1)
-            elif cfg.model == "ForGAN-SegRNN":
+            if cfg.model == "ForGAN-SegRNN":
                 fake_and_condition = combine_vectors(condition[:, :, 1:], fake, dim=-1)
+            else:
+                fake_and_condition = combine_vectors(condition, fake, dim=-1)
+
 
             disc_fake_pred = disc(fake_and_condition, h_0d, c_0d)
 

@@ -33,7 +33,7 @@ def execute_for_gan_ls4(cfg):
 
     print("\nCalculating excess returns and splitting data into train, validation and test sets...\n")
 
-    cfg.batch_size = 1024 #TODO
+    cfg.batch_size = 1024
     train_data, train_loader = data_provider(cfg, 'train')
     val_data, val_loader = data_provider(cfg, 'val')
     test_data, test_loader = data_provider(cfg, 'test')
@@ -63,6 +63,7 @@ def execute_for_gan_ls4(cfg):
     cfg.forgan_part_type = 'generator'
     
     model_ls4_gen = HiddenStateSpaceLS4(cfg)
+    print(model_ls4_gen.config)
 
     if model_ls4_gen_name not in os.listdir(trained_model_dir):
 

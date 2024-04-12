@@ -45,6 +45,9 @@ class HiddenStateSpaceLS4:
 
         config.optim.epochs = cfg.n_epochs
 
+        config.model.z_dim = cfg.hid_g
+        #print('Encoder dimns :: ')
+        #print(config.encoder.posterior.z_dim)
         # Model
         print('==> Building model..')
         model = VAE(config.model)

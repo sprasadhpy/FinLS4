@@ -54,9 +54,8 @@ def main():
             execute_for_gan_tln(cfg)
 
         elif cfg.model == 'ForGAN-LS4':
-            cfg.n_epochs = 5
-            cfg.hid_g = 5
-            cfg.hid_d = 5
+            cfg.hid_g = 16
+            cfg.hid_d = 16
             execute_for_gan_ls4(cfg)
 
 

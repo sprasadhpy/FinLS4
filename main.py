@@ -5,19 +5,21 @@ from Utils.data_preprocessing import data_preprocessing, findETF
 from ExecuteModels.execute_for_gan_lstm import execute_for_gan_lstm
 from ExecuteModels.execute_for_gan_segrnn import execute_for_gan_segrnn
 from ExecuteModels.execute_for_gan_tln import execute_for_gan_tln
+from ExecuteModels.execute_for_gan_ls4 import execute_for_gan_ls4
+
 
 def main():
 
-    models= ['ForGAN-LSTM', 'ForGAN-SegRNN', 'ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD']
+    models= ['ForGAN-LSTM', 'ForGAN-SegRNN', 'ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD', 'ForGAN-LS4']
     # model = 'ForGAN-LSTM'
     # model = 'ForGAN-SegRNN'
-    model = models[0]
+    model = models[-1]
 
     tickers = ['AMZN','AZO','GS','EL']
     # tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
-    # Set the device and print the details of the device
+    # Set the device and print the details of the s
     device = 'cuda:0' if torch.cuda.is_available() else 'cpu'
 
     cfg.device = device
@@ -50,6 +52,12 @@ def main():
 
         elif cfg.model in ['ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD']:
             execute_for_gan_tln(cfg)
+
+        elif cfg.model == 'ForGAN-LS4':
+            cfg.n_epochs = 5
+            cfg.hid_g = 5
+            cfg.hid_d = 5
+            execute_for_gan_ls4(cfg)
 
 
 if __name__ == "__main__":

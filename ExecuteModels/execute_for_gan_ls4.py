@@ -33,7 +33,7 @@ def execute_for_gan_ls4(cfg):
 
     print("\nCalculating excess returns and splitting data into train, validation and test sets...\n")
 
-    cfg.batch_size = 64 #TODO
+    cfg.batch_size = 1024 #TODO
     train_data, train_loader = data_provider(cfg, 'train')
     val_data, val_loader = data_provider(cfg, 'val')
     test_data, test_loader = data_provider(cfg, 'test')

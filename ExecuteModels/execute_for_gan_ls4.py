@@ -168,7 +168,7 @@ def execute_for_gan_ls4(cfg):
 
         debug = False
         resume = False
-        model_ls4_disc.config.optim.epochs = 3 #TODO
+        model_ls4_disc.config.optim.epochs = 20 #TODO
         pbar = tqdm(range(start_epoch, start_epoch + model_ls4_disc.config.optim.epochs), disable=not debug)
         print(model_ls4_disc.config)
         for epoch in pbar:

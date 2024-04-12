@@ -102,5 +102,5 @@ class GeneratorWithLS4(nn.Module):
         torch.Size([1, 64, 25])
         torch.Size([1, 64, 1])
         '''
-        #out = out * self.std + self.mean
+        out = out * self.std + self.mean
         return out

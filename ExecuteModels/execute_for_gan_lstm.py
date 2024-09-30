@@ -32,6 +32,7 @@ def execute_for_gan_lstm(cfg):
     val_data, val_loader = data_provider(cfg, 'val')
     test_data, test_loader = data_provider(cfg, 'test')
 
+
     print("\nData Splitting Completed...\n")
 
     first_batch_inputs = next(iter(train_loader)).to(device)

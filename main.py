@@ -7,6 +7,11 @@ from ExecuteModels.execute_for_gan_segrnn import execute_for_gan_segrnn
 from ExecuteModels.execute_for_gan_tln import execute_for_gan_tln
 from ExecuteModels.execute_for_gan_ls4 import execute_for_gan_ls4
 
+from Utils.regime_analysis import analyse_regime
+
+import os
+os.environ['CXX'] = 'g++-8'
+
 
 def main():
 
@@ -14,9 +19,10 @@ def main():
     # model = 'ForGAN-LSTM'
     # model = 'ForGAN-SegRNN'
     model = models[-1]
+    regime_analysis = False
 
     tickers = ['AMZN','AZO','GS','EL']
-    # tickers = ['AMZN']
+    tickers = ['AMZN']
     cfg = Config(model=model, tickers=tickers)
 
     # Set the device and print the details of the s
@@ -43,6 +49,12 @@ def main():
         else:
             cfg.current_ticker = ticker
             cfg.current_etf = ticker
+
+
+        if regime_analysis:
+            analyse_regime(cfg)
+
+
 
         if cfg.model == 'ForGAN-LSTM':
             execute_for_gan_lstm(cfg)

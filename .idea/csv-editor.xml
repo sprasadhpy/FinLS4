@@ -3,14 +3,35 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
-        <entry key="/Results/FinGanLSTM/AMZN/PnL.csv">
+        <entry key="\Data\AMZN.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="/Results/FinGanLSTM/AMZN/results.csv">
+        <entry key="\Results\ForGAN-LSTM\AMZN\excess_returns_test_pred.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\Results\ForGAN-LSTM\AMZN\excess_returns_train.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\Results\ForGAN-LSTM\AMZN\excess_returns_val_pred.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\Results\ForGAN-LSTM\AMZN\gradients.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

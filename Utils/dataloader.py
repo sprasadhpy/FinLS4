@@ -65,6 +65,14 @@ class Dataset_Custom(Dataset):
         train_sr = excess_returns[0:N_tr]
         val_sr = excess_returns[N_tr:N_tr + N_vl]
         test_sr = excess_returns[N_tr + N_vl:]
+
+        results_dir = os.path.join(self.cfg.results_loc, self.cfg.model, self.cfg.current_ticker)
+        excess_returns_train_df = pd.DataFrame(train_sr, columns=['excess_returns'])
+        excess_returns_train_df.to_csv(os.path.join(results_dir, 'excess_returns_train.csv'), index=False)
+
+        # print(f"Excess returns for {self.cfg.current_ticker} saved to {results_dir}")
+
+
         n = int((N_tr - self.cfg.l - self.cfg.pred) / self.cfg.h) + 1
         train_data = np.zeros(shape=(n, self.cfg.l + self.cfg.pred))
         l_tot = 0
@@ -165,6 +173,11 @@ class Dataset_Basis(Dataset):
         val_sr = excess_returns[N_tr:N_tr + N_vl]
         test_sr = excess_returns[N_tr + N_vl:]
 
+        results_dir = os.path.join(self.cfg.results_loc, self.cfg.model, self.cfg.current_ticker)
+        excess_returns_train_df = pd.DataFrame(train_sr, columns=['excess_returns'])
+        excess_returns_train_df.to_csv(os.path.join(results_dir, 'excess_returns_train.csv'), index=False)
+
+        print(f"Excess returns for {self.cfg.current_ticker} saved to {results_dir}")
 
 
 

@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import pandas as pd
-
+import os
 
 def evaluate(gen, test_loader, val_loader, cfg=None):
     """
@@ -23,11 +23,16 @@ def evaluate(gen, test_loader, val_loader, cfg=None):
     test_data = next(iter(test_loader))
     val_data = next(iter(val_loader))
 
+    results_dir = os.path.join(cfg.results_loc, cfg.model, cfg.current_ticker)
+
     df_temp = False
     dt = {'lrd': lrd, 'lrg': lrg, 'type': losstype, 'epochs': n_epochs, 'ticker': ticker, 'hid_g': hid_g,
           'hid_d': hid_d}
-    # print("Validation set best PnL (in bp): ",PnL_best)
-    # print("Checkpoint epoch: ",checkpoint_last_epoch+1)
+
+
+    # Test set
+
+
     ntest = len(test_data)
     gen.eval()
     with torch.no_grad():
@@ -68,6 +73,16 @@ def evaluate(gen, test_loader, val_loader, cfg=None):
     dt['RMSE'] = rmse1.item()
     dt['MAE'] = mae1.item()
     ft1 = mn1.clone().detach().to(device)
+
+    # Save excess returns predictions
+    excess_returns_test_pred = mn1.cpu().detach().numpy()
+    excess_returns_test_pred_df = pd.DataFrame(excess_returns_test_pred, columns=['excess_returns'])
+    excess_returns_test_pred_df.to_csv(os.path.join(results_dir, 'excess_returns_test_pred.csv'))
+
+    # Save excess returns real
+    excess_returns_test_real = rl1.cpu().detach().numpy()
+    excess_returns_test_real_df = pd.DataFrame(excess_returns_test_real, columns=['excess_returns'])
+    excess_returns_test_real_df.to_csv(os.path.join(results_dir, 'excess_returns_test_real.csv'))
 
 
     # look at the Sharpe Ratio
@@ -123,6 +138,9 @@ def evaluate(gen, test_loader, val_loader, cfg=None):
     mn = np.array(mn.cpu())
     dt['narrow means dist'] = (np.std(mn) < 0.0002)
 
+
+    # Validation set
+
     ntest = val_data.shape[0]
     gen.eval()
     with torch.no_grad():
@@ -161,6 +179,14 @@ def evaluate(gen, test_loader, val_loader, cfg=None):
     dt['MAE val'] = mae1.item()
     ft1 = mn1.clone().detach().to(device)
     # print("PnL in bp", PnL)
+
+    excess_returns_val_pred = mn1.cpu().detach().numpy()
+    excess_returns_val_pred_df = pd.DataFrame(excess_returns_val_pred, columns=['excess_returns'])
+    excess_returns_val_pred_df.to_csv(os.path.join(results_dir, 'excess_returns_val_pred.csv'))
+
+    excess_returns_val_real = rl1.cpu().detach().numpy()
+    excess_returns_val_real_df = pd.DataFrame(excess_returns_val_real, columns=['excess_returns'])
+    excess_returns_val_real_df.to_csv(os.path.join(results_dir, 'excess_returns_val_real.csv'))
 
     # look at the Sharpe Ratio
     n_b1 = b1.shape[1]

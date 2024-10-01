@@ -60,11 +60,15 @@ class Dataset_Custom(Dataset):
         N_tr = int(self.cfg.tr * N)
         N_vl = int(self.cfg.vl * N)
         N_tst = N - N_tr - N_vl
+
         train_sr = excess_returns[0:N_tr]
+        train_dt = dates_dt[0:N_tr]
+
         val_sr = excess_returns[N_tr:N_tr + N_vl]
-        train_sr = excess_returns[0:N_tr]
-        val_sr = excess_returns[N_tr:N_tr + N_vl]
+        val_dt = dates_dt[N_tr:N_tr + N_vl]
+
         test_sr = excess_returns[N_tr + N_vl:]
+        test_dt = dates_dt[N_tr + N_vl:]
 
         results_dir = os.path.join(self.cfg.results_loc, self.cfg.model, self.cfg.current_ticker)
         excess_returns_train_df = pd.DataFrame(train_sr, columns=['excess_returns'])

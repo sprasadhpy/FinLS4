@@ -7,7 +7,7 @@ from ExecuteModels.execute_for_gan_segrnn import execute_for_gan_segrnn
 from ExecuteModels.execute_for_gan_tln import execute_for_gan_tln
 from ExecuteModels.execute_for_gan_ls4 import execute_for_gan_ls4
 
-from Utils.regime_analysis import analyse_regime
+# from Utils.regime_analysis import analyse_regime
 
 import os
 os.environ['CXX'] = 'g++-8'
@@ -16,9 +16,9 @@ os.environ['CXX'] = 'g++-8'
 def main():
 
     models= ['ForGAN-LSTM', 'ForGAN-SegRNN', 'ForGAN-FT-Matrix', 'ForGAN-F-SVD', 'ForGAN-FFT-Conv', 'ForGAN-Conv-SVD', 'ForGAN-LS4']
-    # model = 'ForGAN-LSTM'
+    model = 'ForGAN-LS4'
     # model = 'ForGAN-SegRNN'
-    model = models[-1]
+    # model = models[-1]
     regime_analysis = False
 
     tickers = ['AMZN','AZO','GS','EL']

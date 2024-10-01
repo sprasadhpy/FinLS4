@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import os
 
 def excessreturns(cfg,s_df, e_df):
     """
@@ -35,5 +36,56 @@ def excessreturns(cfg,s_df, e_df):
     e_ret[e_ret > 0.15] = 0.15
     e_ret[e_ret < -0.15] = -0.15
     excessret = s_ret - e_ret
+
     dates_dt = pd.to_datetime(s_df['date'])
+
+    dates_dt = pd.DataFrame(np.repeat(dates_dt.values, 2), columns=['date'])[1:]
+
+    results_dir = os.path.join(cfg.results_loc, cfg.model, cfg.current_ticker)
+    dates_df = pd.DataFrame(dates_dt, columns=['date'])
+    dates_df.to_csv(os.path.join(results_dir, 'dates.csv'), index=False)
+
+    # print(dates_dt)
+
+    print("Excess Returns:")
+    print(len(s_df['date']))
+    print(len(excessret))
+    print(len(dates_dt))
+    return excessret, dates_dt
+
+def excessreturns1(cfg, s_df, e_df):
+
+
+    dates_dt = pd.to_datetime(s_df['date'])
+    d1 = pd.to_datetime(cfg.test_start_date)
+    smp = (dates_dt < d1)
+    s_df = s_df[smp]
+    e_df = e_df[smp]
+
+    # s_df['date'] = pd.to_datetime(s_df['date'], format="%Y-%m-%d")
+    # e_df['date'] = pd.to_datetime(e_df['date'], format="%Y-%m-%d")
+    # test_start_date = pd.to_datetime(cfg.test_start_date)
+    #
+    # # test_start_date = pd.to_datetime(cfg.test_start_date)
+    # s_df = s_df[s_df['date'] < test_start_date]
+    # e_df = e_df[e_df['date'] < test_start_date]
+
+
+    s_logclose = np.log(s_df['AdjClose'])
+    e_logclose = np.log(e_df['AdjClose'])
+
+
+    s_ret = np.diff(s_logclose)
+    e_ret = np.diff(e_logclose)
+
+
+    excessret = s_ret - e_ret
+
+    dates_dt = pd.to_datetime(s_df['date'])
+
+    print("Excess Returns:")
+    print(len(s_df['date']))
+    print(len(excessret))
+    print(len(dates_dt))
+
     return excessret, dates_dt
